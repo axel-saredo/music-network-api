@@ -1,4 +1,4 @@
-import {IsString, MinLength, MaxLength, Matches, IsEmail} from 'class-validator';
+import {IsString, MinLength, MaxLength, Matches, IsEmail, IsIn} from 'class-validator';
 import { TypeOfUser } from '../user/type-of-user.enum';
 
 export class AuthCredentialsDto {
@@ -26,5 +26,6 @@ export class AuthCredentialsDto {
     lastName: string;
 
     @IsString()
+    @IsIn([TypeOfUser.PRODUCER, TypeOfUser.ARTIST])
     typeOfUser: TypeOfUser;
 }

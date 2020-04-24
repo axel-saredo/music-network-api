@@ -29,7 +29,6 @@ export class AuthService {
 
         return { accessToken }
     }
-
     
     async doesUserExists(authCredentialsDto: AuthCredentialsDto) {
         const user = await this.userRepository.findOne({ email: authCredentialsDto.email });
