@@ -6,26 +6,35 @@ import { File } from '../file/file.entity'
 export class Track extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     @Generated('uuid')
-    id: number;
+    id: string;
 
     @Column()
     title: string;
 
-    @Column()
+    @Column({ nullable: true })
     plays: number;
 
-    @Column('text', { nullable: true })
-    @OneToOne(type => File)
-    @JoinColumn({name: 'track_picture_id'})
-    picture: File;
+    @Column({ nullable: true })
+    pictureId: string;
 
     @Column('text', { nullable: true })
-    @OneToOne(type => File)
-    @JoinColumn({name: 'audio_id'})
+    @OneToOne(type => File, {cascade: true, onDelete: 'CASCADE', eager: true })
+    @JoinColumn({name: 'pictureId'})
+    picture: File;
+
+    @Column({ nullable: true })
+    audioId: string;
+
+    @Column('text', { nullable: true })
+    @OneToOne(type => File, {cascade: true, onDelete: 'CASCADE', eager: true } )
+    @JoinColumn({ name: 'audioId' })
     audio: File;
+
+    @Column({ nullable: true })
+    authorId: string;
 
     @Column('text', {nullable:true})
     @ManyToOne(type => User, user => user.tracks, { eager: false })
-    @JoinColumn({ name: 'user_id' })
+    @JoinColumn({ name: "authorId" })
     author: User
 }

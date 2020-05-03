@@ -8,7 +8,7 @@ import { File } from '../../file/file.entity';
 @Unique(['email'])
 export class User extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
-    id: number;
+    id: string;
 
     @Column()
     email: string;
@@ -34,13 +34,15 @@ export class User extends BaseEntity {
     @Column({default: null, nullable: true })
     description?: string;
 
+    @Column({ nullable: true })
+    profilePictureId: string;
+
     @Column('text', { nullable: true })
-    @OneToOne(type => File)
-    @JoinColumn({name: 'profile_picture_id'})
+    @OneToOne(type => File, { eager: true })
+    @JoinColumn({ name: 'profilePictureId' })
     profilePicture: File;
 
     @OneToMany(type => Track, track => track.author, { eager: true })
-    @JoinColumn({ name: 'track_id' })
     tracks: Track[];
 
     async validatePassword(password: string): Promise<boolean> {

@@ -1,35 +1,49 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { TrackRepository } from './track.repository';
+import { File } from '../file/file.entity';
+import { Track } from './track.entity';
 
 @Injectable()
 export class TracksService {
-  private tracks = [
-    {
-      id: 1,
-      title: '1st track',
-      author: 'Axel Saredo',
-      file: 'file-id-1',
-      plays: 41230,
-      image: 'image-id-1',
-    },
-    {
-      id: 2,
-      title: '2nd track',
-      author: 'Lean Doldan',
-      file: 'file-id-2',
-      plays: 890,
-      image: 'image-id-2',
-    },
-    {
-      id: 3,
-      title: '3rd track',
-      author: 'Jorge Leone',
-      file: 'file-id-3',
-      plays: 2013,
-      image: 'image-id-3',
-    },
-  ];
+    constructor(
+      @InjectRepository(TrackRepository)
+      private trackRepository: TrackRepository,
+    ) {}
 
-  getTracks() {
-    return this.tracks;
-  }
+    async getTracks() {
+      return await this.trackRepository.find();
+    }
+
+    async changeTrackTitleByTrackId(id: string, newTitle: string) {
+      const track =  await this.trackRepository.findOne(id);
+      
+      track.title = newTitle;
+      track.save();
+
+      return track;
+    }
+
+    async deleteTrackById(id: string) {
+      const track = await this.trackRepository.findOne(id);
+
+      this.deleteTrackPicture(track);
+      this.deleteTrackAudio(track);
+
+      if (track) {
+        await Track.delete(id);
+      }
+    }
+
+    private async deleteTrackPicture(track: Track) {
+      if (track) {
+        await File.delete(track.pictureId);
+      }
+    }
+
+    private async deleteTrackAudio(track: Track) {
+      if (track) {
+        await File.delete(track.audioId);
+      }
+    }
 }

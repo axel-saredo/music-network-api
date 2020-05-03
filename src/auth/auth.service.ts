@@ -18,6 +18,8 @@ export class AuthService {
     }
 
     async signIn(authCredentialsDto: AuthCredentialsDto) {
+        const user = await this.userRepository.findOne({ where: { username: authCredentialsDto.username } });
+
         const username = await this.userRepository.validateUserPassword(authCredentialsDto);
 
         if (!username) {
@@ -27,7 +29,7 @@ export class AuthService {
         const payload: JwtPayload = { username };
         const accessToken = await this.jwtService.sign(payload);
 
-        return { accessToken }
+        return { user, accessToken }
     }
     
     async doesUserExists(authCredentialsDto: AuthCredentialsDto) {
