@@ -3,10 +3,10 @@ import { BaseEntity, Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 @Entity()
 export class File extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
-    id: number;
+    id: string;
 
     @Column()
-    filename: string;
+    fileName: string;
 
     @Column()
     originalName: string;
@@ -15,10 +15,10 @@ export class File extends BaseEntity {
     extension: string;
 
     @Column()
-    path: string;
+    type: string;
 
     @Column()
-    type: string;
+    path: string;
 
     @Column()
     contentType: string;
