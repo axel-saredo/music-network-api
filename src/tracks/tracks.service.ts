@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TrackRepository } from './track.repository';
 import { File } from '../file/file.entity';
@@ -25,13 +25,17 @@ export class TracksService {
     }
 
     async deleteTrackById(id: string) {
-      const track = await this.trackRepository.findOne(id);
+      try {
+        const track = await this.trackRepository.findOne(id);
 
-      this.deleteTrackPicture(track);
-      this.deleteTrackAudio(track);
+        this.deleteTrackPicture(track);
+        this.deleteTrackAudio(track);
 
-      if (track) {
-        await Track.delete(id);
+        if (track) {
+          await Track.delete(id);
+        }
+      } catch (error) {
+          throw new InternalServerErrorException();
       }
     }
 
@@ -39,11 +43,15 @@ export class TracksService {
       if (track) {
         await File.delete(track.pictureId);
       }
+
+      return;
     }
 
     private async deleteTrackAudio(track: Track) {
       if (track) {
         await File.delete(track.audioId);
       }
+
+      return;
     }
 }
