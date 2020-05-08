@@ -1,14 +1,16 @@
-import { Controller, UseInterceptors, UploadedFile, Get, Param, Put, Res, UseFilters, NotFoundException } from '@nestjs/common';
+import { Controller, UseInterceptors, UploadedFile, Get, Param, Put, Res, UseFilters, NotFoundException, UseGuards } from '@nestjs/common';
 import { FileService } from './file.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
 import { Response } from 'express';
 import { HttpExceptionFilter } from '../utils/http-exception-filter';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('/api/files')
 export class FileController {
     constructor(private fileService: FileService) {}
 
+    @UseGuards(AuthGuard('jwt'))
     @Put('/profile-picture/:id')
     @UseInterceptors(FileInterceptor('file', { dest: 'uploads/profile-pictures/' }))
     async createProfilePicture(@UploadedFile() file, @Param('id') userId: string) {
@@ -28,6 +30,7 @@ export class FileController {
         }
     }
 
+    @UseGuards(AuthGuard('jwt'))
     @Put('/audio/:id')
     @UseInterceptors(FileInterceptor('file', { dest: 'uploads/tracks-audios/' }))
     async createTrackAudio(@UploadedFile() file, @Param('id') trackId: string) {
@@ -47,6 +50,7 @@ export class FileController {
         res.sendFile(join(file.path), { root: process.cwd() })
     }
 
+    @UseGuards(AuthGuard('jwt'))
     @Put('/track-picture/:id')
     @UseInterceptors(FileInterceptor('file', { dest: 'uploads/tracks-pictures/' }))
     async createTrackPicture(@UploadedFile() file, @Param('id') trackId: string) {

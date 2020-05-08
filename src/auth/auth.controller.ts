@@ -1,7 +1,8 @@
-import { Post, Controller, Body, ValidationPipe, UseFilters, ConflictException, } from "@nestjs/common";
+import { Post, Controller, Body, ValidationPipe, UseFilters, ConflictException, UseGuards, } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthCredentialsDto } from "./dto/auth-credentials.dto";
 import { HttpExceptionFilter } from "../utils/http-exception-filter";
+import { AuthGuard } from "@nestjs/passport";
 
 @Controller('auth')
 export class AuthController {

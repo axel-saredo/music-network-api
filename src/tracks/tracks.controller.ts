@@ -1,6 +1,7 @@
-import { Controller, Get, Put, Param, Body, Delete, NotFoundException, UseFilters } from '@nestjs/common';
+import { Controller, Get, Put, Param, Body, Delete, NotFoundException, UseFilters, UseGuards, InternalServerErrorException } from '@nestjs/common';
 import { TracksService } from './tracks.service';
 import { HttpExceptionFilter } from '../utils/http-exception-filter';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('api/tracks')
 export class TracksController {
@@ -11,6 +12,7 @@ export class TracksController {
     return await this.tracksService.getTracks();
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Put('/:id')
   @UseFilters(new HttpExceptionFilter())
   async changeTrackTitle(@Param('id') trackId: string, @Body('title') newTitle: string) {
@@ -21,9 +23,14 @@ export class TracksController {
     }
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Delete('/:id')
   @UseFilters(new HttpExceptionFilter())
   async deleteTrack(@Param('id') trackId: string) {
-    return await this.tracksService.deleteTrackById(trackId);
+    try {
+        return await this.tracksService.deleteTrackById(trackId);
+    } catch (error) {
+        throw new InternalServerErrorException();
+    }
   }
 }

@@ -6,7 +6,9 @@ import { UserRepository } from '../auth/user/user.repository';
 import { TrackRepository } from '../tracks/track.repository';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([UserRepository]), TypeOrmModule.forFeature([TrackRepository]),
+    imports: [
+        TypeOrmModule.forFeature([UserRepository]), 
+        TypeOrmModule.forFeature([TrackRepository]),
 ],
     controllers: [
         UsersController, ],

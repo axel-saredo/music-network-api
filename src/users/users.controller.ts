@@ -1,7 +1,8 @@
-import { Controller, Get, Param, Post, Body, UseFilters, NotFoundException, Put } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, UseFilters, NotFoundException, Put, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Track } from '../tracks/track.entity';
 import { HttpExceptionFilter } from '../utils/http-exception-filter';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('/api/user')
 export class UsersController {
@@ -23,6 +24,7 @@ export class UsersController {
         return await this.usersService.getTracksByUserId(id);
     }
 
+    @UseGuards(AuthGuard('jwt'))
     @Post('/:id/track')
     @UseFilters(new HttpExceptionFilter())
     async createTrack(@Param('id') authorId: string, @Body() trackData: Partial<Track>) {
@@ -33,6 +35,7 @@ export class UsersController {
         }
     }
 
+    @UseGuards(AuthGuard('jwt'))
     @Put('/:id/description')
     @UseFilters(new HttpExceptionFilter())
     async addProfileDescription(@Param('id') userId: string, @Body('description') description: string) {
